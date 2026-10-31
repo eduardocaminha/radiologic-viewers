@@ -303,7 +303,7 @@ function ViewerCard({ position, locale, viewer, rank, votes, copy, voteCopy, sha
             </span>
           ) : null}
         </span>
-        <span className="flex items-start gap-3 px-2 pb-2 pe-32">
+        <span className="flex items-start gap-3 px-2 pb-12 sm:pb-2 sm:pe-32">
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="truncate font-medium">
               {rank !== null ? <span className="me-2 tabular-nums text-muted-foreground">{rank}</span> : null}

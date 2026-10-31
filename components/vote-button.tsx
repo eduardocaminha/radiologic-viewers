@@ -187,7 +187,7 @@ export function VoteButton({
     const previousCount = count;
     setMessage(undefined);
     setVoted(!previousVoted);
-    setCount(previousCount + (previousVoted ? -1 : 1));
+    setCount(Math.max(previousCount + (previousVoted ? -1 : 1), 0));
     if (!previousVoted) setBeat((current) => current + 1);
     setPending(true);
     let failed = false;

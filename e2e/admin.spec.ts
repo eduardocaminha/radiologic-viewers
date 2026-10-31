@@ -50,7 +50,7 @@ test.beforeAll(async () => {
   for (const id of [approvedId, rejectedId]) await admin.from("submissions").delete().eq("id", id);
 
   const submissions = [
-    { id: approvedId, slug: "viewer-da-fila", status: "pending", source: "github", github_issue_number: 42, owner_id: adminId, name: "Viewer da fila", tagline: "Uma fila para revisar", description: "Descrição completa do viewer.", differential: "Revisão interna.", lang: "pt", platforms: ["web"], requires_install: false, repo_url: "https://example.test/repo", license: "MIT", base_tech: "scratch", data_source: "Dados sintéticos", data_license: "CC0", external_api: false, demo_url: "https://example.test/demo", rules_version: "1", rules_accepted_at: new Date().toISOString() },
+    { id: approvedId, slug: "viewer-da-fila", status: "pending", source: "github", github_issue_number: 42, owner_id: adminId, name: "Viewer da fila", tagline: "Uma fila para revisar", description: "Descrição completa do viewer.", differential: "Revisão interna.", lang: "pt", platforms: ["web"], requires_install: false, repo_url: "https://example.test/repo", license: "MIT", base_tech: "scratch", data_source: "Dados sintéticos", data_license: "CC0", external_api: false, demo_url: "https://example.test/demo", workflow_parts: ["viewer"], rules_version: "1", rules_accepted_at: new Date().toISOString() },
     { id: rejectedId, slug: "viewer-para-rejeitar", status: "pending", source: "form", owner_id: adminId, name: "Viewer para rejeitar", tagline: "Outro viewer", description: "Descrição para rejeição.", differential: "Motivo para teste.", lang: "pt", platforms: ["web"], requires_install: false, repo_url: "https://example.test/repo-2", license: "MIT", base_tech: "scratch", data_source: "Dados sintéticos", data_license: "CC0", external_api: false, demo_url: "https://example.test/demo-2", rules_version: "1", rules_accepted_at: new Date().toISOString() },
   ];
   const { error: submissionError } = await admin.from("submissions").insert(submissions);
@@ -90,6 +90,14 @@ test("restringe a fila a admins e permite moderar a ficha e cada imagem", async 
   await expect(approved.getByText("Viewer removido")).toBeVisible();
   await approved.getByRole("button", { name: "Restaurar na galeria" }).click();
   await expect(approved.getByText("Viewer publicado")).toBeVisible();
+
+  await approved.getByRole("button", { name: "Marcar como projeto do organizador" }).click();
+  await expect(approved.getByRole("button", { name: "Tirar marca do organizador" })).toBeVisible();
+  await page.goto("/pt/v/viewer-da-fila");
+  await expect(page.getByText(/projeto do organizador/i).first()).toBeVisible();
+  await page.goto("/admin");
+  await approved.getByRole("button", { name: "Tirar marca do organizador" }).click();
+  await expect(approved.getByRole("button", { name: "Marcar como projeto do organizador" })).toBeVisible();
 
   await approved.getByRole("button", { name: "Retirar imagem" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Retirar", exact: true }).click();

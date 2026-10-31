@@ -1,6 +1,6 @@
 begin;
 
-select plan(19);
+select plan(20);
 
 -- As fichas do teste são incompletas de propósito.
 alter table public.submissions disable trigger submissions_guard_edit;
@@ -53,6 +53,8 @@ select is((select count(*) from public.submission_events where kind = 'organizer
 select is((select organizer_project from public.get_submission('fair-org')), true, 'get_submission exposes the mark');
 
 select public.write_monthly_highlights((date_trunc('month', timezone('America/Sao_Paulo', now())) - interval '1 month')::date);
+select public.write_monthly_highlights((date_trunc('month', timezone('America/Sao_Paulo', now())) - interval '2 months')::date);
+select is((select count(*) from public.monthly_highlights where month = (date_trunc('month', timezone('America/Sao_Paulo', now())) - interval '2 months')::date), 0::bigint, 'a month without votes has no highlights');
 select is((select count(*) from public.monthly_highlights where submission_id = '66666666-6666-4666-8666-666666666613'), 0::bigint, 'organizer project stays out of the highlights despite the most votes');
 select is((select submission_id from public.monthly_highlights where rank = 1 and month = (date_trunc('month', timezone('America/Sao_Paulo', now())) - interval '1 month')::date), '66666666-6666-4666-8666-666666666612'::uuid, 'ties go to the most recently approved project');
 

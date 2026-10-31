@@ -6,7 +6,7 @@ Aprovada pelo dono em 2026-10-03. Mudança de decisão passa por ele.
 
 - **D1 Formato:** showcase permanente, sem prazo e sem prêmio. Só projetos submetidos pelo público. Escopo ampliado em 2026-10-30 para a workstation de laudo: `workflow_parts` guarda as partes (viewer, worklist, ai, agent, report), com ao menos uma exigida no envio. A demo pública não chama LLM ao vivo.
 - **D2 Julgamento:** só voto popular. Login Google ou GitHub, um voto por conta por viewer. Voto próprio é permitido.
-- **D3 Destaques:** top 3 do mês. O mês fecha à meia-noite de `America/Sao_Paulo`. Resultado gravado em snapshot imutável.
+- **D3 Destaques:** top 3 do mês, só com projetos que receberam voto no mês. O mês fecha à meia-noite de `America/Sao_Paulo`. Resultado gravado em snapshot imutável.
 - **D4 Submissão:** formulário no site e Issue Form no GitHub, na mesma fila de moderação.
 - **D5 Open source obrigatório:** repo público com licença open source declarada em SPDX.
 - **D6 Moderação:** pré-moderação na primeira publicação e em cada imagem.

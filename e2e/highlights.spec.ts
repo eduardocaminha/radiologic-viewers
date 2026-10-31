@@ -102,6 +102,10 @@ test("recalcula o snapshot apenas com confirmação e registra o evento", async 
   const context = await signInAdmin(browser);
   const page = await context.newPage();
   const previous = month(-1).slice(0, 7);
+  const { url, secretKey } = localEnv();
+  const admin = createClient(url, secretKey, { auth: { autoRefreshToken: false, persistSession: false } });
+  const { error: voteError } = await admin.from("votes").insert({ user_id: "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", submission_id: activeId, created_at: `${previous}-15T12:00:00Z` });
+  expect(voteError).toBeNull();
   await page.goto("/admin");
   await page.getByRole("heading", { name: "Recalcular destaques mensais" }).scrollIntoViewIfNeeded();
   await page.locator('input[name="month"]').fill(previous);
@@ -109,11 +113,9 @@ test("recalcula o snapshot apenas com confirmação e registra o evento", async 
   await page.getByRole("button", { name: "Recalcular snapshot" }).click();
   await expect(page.getByRole("status")).toContainText(`Destaques de ${previous} recalculados.`);
 
-  const { url, secretKey } = localEnv();
-  const admin = createClient(url, secretKey, { auth: { autoRefreshToken: false, persistSession: false } });
   const { data: rows, error: rowsError } = await admin.from("monthly_highlights").select("rank").eq("month", `${previous}-01`);
   expect(rowsError).toBeNull();
-  expect(rows).toHaveLength(2);
+  expect(rows).toHaveLength(1);
   const { data: events, error: eventsError } = await admin.from("submission_events").select("id").eq("kind", "snapshot_recomputed").eq("detail->>month", `${previous}-01`);
   expect(eventsError).toBeNull();
   expect(events).toHaveLength(1);

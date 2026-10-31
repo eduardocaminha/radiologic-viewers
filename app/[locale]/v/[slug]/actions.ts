@@ -1,6 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { locales } from "@/lib/i18n";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 const voteRequestSchema = z.object({
@@ -20,5 +22,7 @@ export async function changeVote(input: unknown): Promise<VoteActionResult> {
     : await supabase.rpc("revoke_vote", { p_submission_id: parsed.data.submissionId });
 
   if (result.error) return { ok: false, errorCode: result.error.code };
+  // A galeria fica em cache: sem isto, a contagem volta atrasada e o botão parte de um número errado.
+  for (const locale of locales) revalidatePath(`/${locale}`);
   return { ok: true };
 }

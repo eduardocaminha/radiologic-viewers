@@ -87,6 +87,23 @@ test("ficha compartilha o link com a mensagem pedindo voto", async ({ page }) =>
   await expect(page.getByRole("button", { name: "Link copiado" })).toBeVisible();
 });
 
+test("ficha oferece a folha nativa quando o aparelho tem compartilhamento", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "share", {
+      value: (data: ShareData) => {
+        (window as unknown as { shared: ShareData }).shared = data;
+        return Promise.resolve();
+      },
+    });
+  });
+  await page.goto("/pt/v/galeria-viewer");
+  await page.getByRole("button", { name: "Compartilhar" }).click();
+  await page.getByRole("button", { name: "Mais opções" }).click();
+  const shared = await page.evaluate(() => (window as unknown as { shared: ShareData }).shared);
+  expect(shared.url).toContain("/pt/v/galeria-viewer");
+  expect(shared.title).toBe("Galeria Viewer");
+});
+
 test("gallery mantém a ficha legível em 1280 px", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/en/v/galeria-viewer");
